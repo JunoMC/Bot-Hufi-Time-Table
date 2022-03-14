@@ -1,9 +1,9 @@
 settings:
   bot:
-    token: "OTUyNTQzNzY5NDAyNjk1NzAw.Yi3jhA.3tSAKyOIIC9QjhPDJ-j6g-reDUM"
+    token: "bot token"
 
   command:
     prefix: "t!"
 
   captcha:
-    key: "764d500c95540069803e13d243cb4063"
+    key: "APIKey 2captcha"

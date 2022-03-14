@@ -43,19 +43,22 @@ function getTime() {
 }
 
 async function loginHufi(mssv, txt) {
-    console.log(`[${getTime()}] `.blue + `#${mssv} đang đăng nhập.`.green);
+    console.log(`[${getTime()}] `.blue + `#${mssv} đang khởi động.`.green);
     var browser = await puppeteer.launch({
         defaultViewport: null,
         headless: false,
         ignoreHTTPSErrors: true,
         slowMo: 5,
-        args: [`--window-size=1000,1070`],
+        args: [`--window-size=1520,850`],
         defaultViewport: {
-            width:1000,
-            height:1070,
+            width:1520,
+            height:850,
             isMobile: true
         }
     });
+	
+	var embelmsg3 = new MessageEmbed().setColor("#ffef3b").setTitle("Đang bắt đầu lấy lịch #" + mssv + "...");
+    txt.channel.send({embeds: [embelmsg3]});
 
     var sinhvienPage = await browser.newPage();
     await sinhvienPage.goto("https://sinhvien.hufi.edu.vn/tra-cuu-thong-tin.html", { waitUntil: 'networkidle0' });
@@ -83,7 +86,7 @@ async function loginHufi(mssv, txt) {
 		var moveToTableId = "#ketquaTraCuu > tbody > tr:nth-child(1) > td:nth-child(7) > a:nth-child(1)";
 
         if (!isNaN(response.data)) {
-            var embelmsg2 = new MessageEmbed().setColor("#ff0000").setTitle("Đăng nhập thất bại, vui lòng thử lại!");
+            var embelmsg2 = new MessageEmbed().setColor("#ff0000").setTitle("Lấy lịch học thất bại, vui lòng thử lại!");
             txt.channel.send({embeds: [embelmsg2]});
             await browser.close();
             console.log(`[${getTime()}] `.blue + `#${mssv} lấy lịch học thất bại.`.red);
@@ -97,7 +100,7 @@ async function loginHufi(mssv, txt) {
         await sinhvienPage.goto(timeUrlId, {waitUntil: 'networkidle0'});
 
         console.log(`[${getTime()}] `.blue + `#${mssv} đang lấy lịch học trong tuần.`.green);
-        var embelmsg2 = new MessageEmbed().setColor("#3ac241").setTitle("Đăng nhập thành công, đang lấy lịch học...");
+        var embelmsg2 = new MessageEmbed().setColor("#3ac241").setTitle("Đang lấy lịch học...");
         await txt.channel.send({embeds: [embelmsg2]});
 
         await new Promise(r => setInterval(r, 1000));
@@ -126,17 +129,18 @@ client.on("message", async (txt)=> {
     if (txt.author.bot || !txt.content.startsWith(prefix)) return;
     
     if (cmdName == "GET") {
-		(await txt).delete();
         if (readyBot == 0) {
+			(await txt).delete();
             var getMssv = args.shift();
             readyBot    = 1;
             await loginHufi(getMssv, txt);
         } else {
-            var embelmsg2 = new MessageEmbed().setColor("#fc0303").setTitle("Có lệnh đang thực thi, vui lòng thử lại sau").setFooter();
-            var sended = txt.channel.send({embeds: [embelmsg2]});
+            var embelmsg2 = new MessageEmbed().setColor("#fc0303").setTitle("Có lệnh đang thực thi, vui lòng thử lại sau");
+            var sended = txt.reply({embeds: [embelmsg2]});
 			
             setTimeout(async function() {
                 (await sended).delete();
+				(await txt).delete();
             }, 2000);
         }
     }
